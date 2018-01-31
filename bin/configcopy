@@ -48,17 +48,20 @@ if (aliases[subcmd]) subcmd = aliases[subcmd];
 if (!subcmd) {
   program.help();
 } else {
-  const bin = executable(subcmd);
-  if (bin) {
-    console.log(bin);
-    wrap(spawn(bin, args, {stdio: 'inherit', customFds: [0, 1, 2]}));
+  const codeFile = getCmdCodeFile(subcmd);
+  if (codeFile) {
+    console.log(codeFile);
+
+    // run shell as node application;
+    ExitClose(spawn(codeFile, args, {stdio: 'inherit', customFds: [0, 1, 2]}));
+
   } else {
     program.help();
   }
 }
 
-function wrap(sp) {
-  sp.on('close', function(code) {
+function ExitClose(subProccess) {
+  subProccess.on('close', function(code) {
     process.exit(code);
   });
 }
@@ -73,8 +76,8 @@ function printHelp() {
   console.log('  All commands can be run with -h (or --help) for more information.')
 }
 
-function executable(subcmd) {
-  var file = join(__dirname, 'dva-' + subcmd);
+function getCmdCodeFile(subcmd) {
+  var file = join(__dirname, 'configcopy-' + subcmd);
   if (exists(file)) {
     return file;
   }

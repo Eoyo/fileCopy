@@ -1,6 +1,6 @@
 {
   "name": "configcopy",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The dva command line utility.",
   "repository": {
     "type": "git",
@@ -10,7 +10,8 @@
   "mail": "liumio <yoix@foxmail.com>",
   "license": "MIT",
   "bin": {
-    "config": "./bin/config"
+    "ccp": "./bin/configcopy"
+    , "configcopy": "./bin/configcopy"
   },
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib"

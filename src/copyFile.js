@@ -20,10 +20,16 @@ function success(message) {
 }
 // >>
 
-function init({ demo, install }) {
-  const type = demo ? 'demo' : 'app';
+// type = 'typescript'
+function copyFile({ type, install }) {
+
+  // 获取模板的位置;
   const cwd = join(__dirname, '../boilerplates', type);
+
+  // 目标位置;
   const dest = process.cwd();
+
+  // 建立的项目目录名字
   const projectName = basename(dest);
 
   if (!emptyDir(dest)) {
@@ -31,13 +37,14 @@ function init({ demo, install }) {
     process.exit(1);
   }
 
-  console.log(`Creating a new Dva app in ${dest}.`);
+  console.log(`Creating a working place in ${dest}.`);
   console.log();
 
-  vfs.src(['**/*', '!node_modules/**/*'], {cwd: cwd, cwdbase: true, dot: true})
-    .pipe(template(dest, cwd))
+  // copy files to dest;
+  vfs.src(['**/*', '!node_modules/**/*'], { cwd: cwd, cwdbase: true, dot: true })
+    .pipe(LogFileCutCwd(dest, cwd))
     .pipe(vfs.dest(dest))
-    .on('end', function() {
+    .on('end', function () {
       info('rename', 'gitignore -> .gitignore');
       renameSync(join(dest, 'gitignore'), join(dest, '.gitignore'));
       if (install) {
@@ -66,12 +73,12 @@ Happy hacking!`);
   }
 }
 
-function template(dest, cwd) {
+// 打印复制时的日志; 提供当前的地址以简化输入
+function LogFileCutCwd(dest, cwd) {
   return through.obj(function (file, enc, cb) {
     if (!file.stat.isFile()) {
       return cb();
     }
-
     info('create', file.path.replace(cwd + '/', ''));
     this.push(file);
     cb();
