@@ -1,7 +1,7 @@
 {
   "name": "configcopy",
-  "version": "0.0.2",
-  "description": "The dva command line utility.",
+  "version": "0.0.5",
+  "description": "The config files copy, help you build your node project quicker",
   "repository": {
     "type": "git",
     "url": "https://github.com/Eoyo/fileCopy"
@@ -11,7 +11,6 @@
   "license": "MIT",
   "bin": {
     "ccp": "./bin/configcopy"
-    , "configcopy": "./bin/configcopy"
   },
   "scripts": {
     "build": "rm -rf lib && babel src --out-dir lib"
