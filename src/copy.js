@@ -1,6 +1,6 @@
 import { join, basename } from 'path';
 import vfs from 'vinyl-fs';
-import { renameSync } from 'fs';
+import fs from 'fs';
 import through from 'through2';
 import { sync as emptyDir } from 'empty-dir';
 import leftPad from 'left-pad';
@@ -22,7 +22,8 @@ function success(message) {
 
 // type = 'typescript'
 function copyFile({ type, install }) {
-
+  
+  console.log(type);
   // 获取模板的位置;
   const cwd = join(__dirname, '../boilerplates', type);
 
@@ -45,8 +46,14 @@ function copyFile({ type, install }) {
     .pipe(LogFileCutCwd(dest, cwd))
     .pipe(vfs.dest(dest))
     .on('end', function () {
-      info('rename', 'gitignore -> .gitignore');
-      renameSync(join(dest, 'gitignore'), join(dest, '.gitignore'));
+      if (fs.existsSync(join(dest, 'gitignore'))) {
+        fs.renameSync(join(dest, 'gitignore'), join(dest, '.gitignore'));
+        info('rename', 'gitignore -> .gitignore');
+      } else { // 不存在的 gitignore,提供默认的.gitignore
+        // gitignore
+        fs.writeFileSync(join(dest, '.gitignore'),'node_modules');
+        info('create', '.gitignore')
+      }
       if (install) {
         info('run', 'npm install');
         require('./install')(printSuccess);
@@ -57,19 +64,7 @@ function copyFile({ type, install }) {
     .resume();
 
   function printSuccess() {
-    success(`
-Success! Created ${projectName} at ${dest}.
-
-Inside that directory, you can run several commands:
-  * npm start: Starts the development server.
-  * npm run build: Bundles the app into dist for production.
-  * npm test: Run test.
-
-We suggest that you begin by typing:
-  cd ${dest}
-  npm start
-
-Happy hacking!`);
+    success(`Success! Created ${projectName} at ${dest}.`);
   }
 }
 
@@ -85,4 +80,4 @@ function LogFileCutCwd(dest, cwd) {
   });
 }
 
-export default init;
+export default copyFile;
