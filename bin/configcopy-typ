@@ -13,10 +13,14 @@ program
   .option('--no-install', 'Disable npm install after files created')
   .parse(process.argv);
 
+const copyAction = {type: 'typescript', install: false}
+const copyFunction = require('../lib/copy');
+
 if (!program.args[0]) {
-  program.help();
+  console.log('copy the config file rigth there');
+  console.log('@', process.cwd())
+  copyFunction(copyAction)
 } else {
-  // 当有参数传入时;
   const dest = join(process.cwd(), program.args[0]);
   if (existsSync(dest)) {
     console.error(error('Existing directory here, please run new command for an empty folder!'));
@@ -24,5 +28,5 @@ if (!program.args[0]) {
   }
   mkdirpSync(dest);
   process.chdir(dest);
-  require('../lib/init')({type: 'typescript', install: program.install});
+  copyFunction(copyAction)
 }

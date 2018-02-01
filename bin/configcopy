@@ -7,6 +7,7 @@ const spawn = require('win-spawn');
 const join = require('path').join;
 const resolve = require('path').resolve;
 const exists = require('fs').existsSync;
+const fs = require('fs');
 const readFileSync = require('fs').readFileSync;
 
 // Notify update when process exits
@@ -42,19 +43,19 @@ const aliases = {
   g: 'generate',
 };
 const args = process.argv.slice(3);
+
 let subcmd = program.args[0];
 if (aliases[subcmd]) subcmd = aliases[subcmd];
+
 
 if (!subcmd) {
   program.help();
 } else {
   const codeFile = getCmdCodeFile(subcmd);
   if (codeFile) {
-    console.log(codeFile);
-
     // run shell as node application;
+    // the shell script need run 
     ExitClose(spawn(codeFile, args, {stdio: 'inherit', customFds: [0, 1, 2]}));
-
   } else {
     program.help();
   }
